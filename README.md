@@ -4,8 +4,9 @@ Adds a virtual joystick (based on [NippleJS](https://www.npmjs.com/package/nippl
 
 ## Install
 
-NPM: `npm i @litecanvas/plugin-joystick`
-CDN: `https://unpkg.com/@litecanvas/plugin-joystick/dist/dist.js`
+**NPM**: `npm i @litecanvas/plugin-joystick`
+
+**CDN**: `https://unpkg.com/@litecanvas/plugin-joystick/dist/dist.js`
 
 ## Usage
 
