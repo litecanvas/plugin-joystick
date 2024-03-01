@@ -27,6 +27,7 @@
     "esbuild": "^0.20.1"
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ]
 }
