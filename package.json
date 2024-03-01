@@ -16,10 +16,11 @@
   "keywords": [
     "litecanvas",
     "joystick",
-    "touch"
+    "touch",
+    "gamedev"
   ],
   "scripts": {
-    "start": "esbuild src/index.js --format=umd --bundle --watch --outfile=dist/dist.js --servedir=public",
+    "start": "esbuild src/index.js --format=iife --bundle --watch --outfile=dist/dist.js --servedir=public",
     "build": "esbuild src/index.js --format=iife --bundle --minify --outfile=dist/dist.js",
     "postinstall": "npm run build"
   },
