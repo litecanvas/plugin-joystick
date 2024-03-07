@@ -1,19 +1,23 @@
-/*! Joystick plugin for litecanvas v0.1.0 by Luiz Bills | MIT Licensed */
+/*! Joystick plugin for litecanvas v0.1.1 by Luiz Bills | MIT Licensed */
 export default function plugin(engine, { set }) {
   let _enabled = false
   let _parent = engine.PARENT
-  const _manager = nipplejs.create({
-    zone: _parent,
-    mode: "dynamic",
-    color: "#4854a8",
-    size: engine.WIDTH / 3,
-  })
 
   if (document.body === _parent) {
     _parent = document.createElement("div")
+    _parent.id = "litecanvas-wrapper"
     document.body.appendChild(_parent)
     _parent.appendChild(engine.CANVAS)
   }
+
+  const defaultZone = _parent.querySelector("#joystick-wrapper")
+  const _manager = nipplejs.create({
+    zone: defaultZone ? defaultZone : _parent,
+    mode: "dynamic",
+    color: "#4854a8",
+    size: engine.WIDTH / 5,
+    multitouch: false,
+  })
 
   const JOYSTICK = {
     manager: _manager,
