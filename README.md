@@ -16,6 +16,7 @@ import pluginJoystick from "@litecanvas/plugin-joystick"
 
 litecanvas({
   plugins: [pluginJoystick],
+  loop: { init, update, draw }
 })
 
 actor = {
