@@ -1,5 +1,12 @@
-/*! Joystick plugin for litecanvas v0.1.1 by Luiz Bills | MIT Licensed */
-export default function plugin(engine, { set }) {
+/*! Joystick plugin for litecanvas v0.1.2 by Luiz Bills | MIT Licensed */
+export default function plugin(engine, { settings }) {
+  console.log(settings)
+  if (settings.tapEvents ?? true) {
+    throw new Error(
+      "[litecanvas] Joystick plugin requires the `tapEvents` settings disabled"
+    )
+  }
+
   let _enabled = false
   let _parent = engine.PARENT
 
