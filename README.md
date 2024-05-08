@@ -30,7 +30,7 @@ function update(dt) {
   if (JOYSTICK.active) {
     const force = min(JOYSTICK.force, 2)
     actor.x += actor.speed * force * cos(JOYSTICK.angle) * dt
-    actor.y += actor.speed * -force * sin(JOYSTICK.angle) * dt
+    actor.y += actor.speed * force * sin(JOYSTICK.angle) * dt
   }
 }
 
@@ -40,6 +40,6 @@ function draw() {
 }
 ```
 
-[See this demo in litecanvas playground](https://litecanvas.js.org?c=eJxtkEFPAjEQhe%2F7K%2Ba2LZbdFRMPJBgNEgMaSICDHJtuFwulu2lnEWL47y6lKEQvTWc6X9%2B8pxVKwc2WO0KjiAssLfTgKwLYdaE%2FGM8H03fWVPtztThWrpIy70Iny1h0iKKiNgJVaUAZhYR6XJc8nwmrKiTxB2Llumlam2q9TES5SR%2F1j25a6XqpTHtV7h0qsU5z5dAfycrFDIiVjkLvwf8KUDtJTsQoALTpH%2BjVHnWVc5Qkx9MuqgDyNnl6Ho5fKFiJtTWhO5osZvNh%2FzVpnKutpEFElMYhFKUVskljo8zvoG8yuKV%2B0AeW7OCmF64%2BGWgFttX85C5EzFI3Gi3I8YLe%2F6XbZ9xdSl%2FjhyvHueWfIXmhJbfEL%2FiPcUC5Q5KxjMXhJUmS%2BDgslBWF0poEU%2By8H4O7DoP7JuJvrZKo%2FQ%3D%3D)
+[See this demo in litecanvas playground](https://litecanvas.js.org?c=eJx1UdFOwjAUfd9X3Le1WLeJiQ8kGA0SAxpIhAd5XLoOC6Vb2juEmP27oys6En1pem7PueecVEkUPNX71BIaBHmlOcpCg9QSCYWvAEAVabbgRpZIwg%2FE0g7iuNLldh3xYhc%2FqJ8FcamqtdTXm%2BJoUfJtnEmL7og2NmRAjLAUhvduK0BlBWkVUy%2BgzbxuUgCkHAsDQ888DGA0ni3Hb%2B%2FM4eMZr1psSyGyAfST5ITroO4UqcosRUEybMvIHMjr%2FPFpMnumYARWRvvpdL5aLCejl6jxlntBvTcvtEXIC8NFk2cn9S%2FRDRncUEd0kaMDXA391aWCntf2mk22Y6LXqvHoQYYd9fF%2Fte06X6ovC2cm%2FfQ%2Fx5VIDXH5%2FugNKA5IEpaw0L9EURSeyFwankuliO%2FEzvEY3PYZ3NGg%2FgamK6oQ)
 
 For more details, check the [demo](demo/index.html).
