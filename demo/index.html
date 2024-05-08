@@ -16,22 +16,29 @@
     </style>
   </head>
   <body>
-    <script src="https://unpkg.com/@litecanvas/litecanvas/dist/dist.js"></script>
+    <script src="https://unpkg.com/@litecanvas/litecanvas/dist/dist.min.js"></script>
     <script src="../dist/dist.js"></script>
     <script>
       litecanvas({
-        plugins: [pluginJoystick],
-        loop: { init, update, draw },
-        tapEvents: false,
+        loop: { init, update, draw, resized },
       })
 
+      use(pluginJoystick) // load the plugin
+
+      function resized() {
+        // set a custom zone from half the screen down
+        JOYSTICK.zone(0, CENTERY, WIDTH, HEIGHT / 2)
+      }
+
       function init() {
-        // change the joystick color
-        JOYSTICK.color("gray")
+        // customize the joystick
+        JOYSTICK.style.color = 5
+        JOYSTICK.style.size = HEIGHT / 12
+        JOYSTICK.zone(0, CENTERY, WIDTH, HEIGHT / 2)
+        JOYSTICK.style.opacityInactive = 0.1
+        JOYSTICK.style.opacityActive = 0.6
 
-        // change the joystick size
-        JOYSTICK.size(80)
-
+        // the player object
         actor = {
           x: CENTERX,
           y: CENTERY,
@@ -40,16 +47,18 @@
       }
 
       function update(dt) {
+        // use the joystick to move the player object
         if (JOYSTICK.active) {
-          const force = min(JOYSTICK.force, 1)
+          const force = min(JOYSTICK.force, 2)
           actor.x += actor.speed * force * cos(JOYSTICK.angle) * dt
-          actor.y += actor.speed * -force * sin(JOYSTICK.angle) * dt
+          actor.y += actor.speed * force * sin(JOYSTICK.angle) * dt
         }
       }
 
       function draw() {
-        clear(1)
+        cls(1)
         circfill(actor.x, actor.y, 32, 6)
+        // print(10, 10, FPS, 4)
       }
     </script>
   </body>
