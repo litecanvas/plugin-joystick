@@ -1,6 +1,6 @@
 {
   "name": "@litecanvas/plugin-joystick",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Virtual joystick for litecanvas games based on NippleJS",
   "author": "Luiz Bills <luizbills@pm.me>",
   "license": "MIT",
@@ -26,6 +26,9 @@
   },
   "devDependencies": {
     "esbuild": "^0.20.1"
+  },
+  "peerDependencies": {
+    "@litecanvas/litecanvas": "*"
   },
   "files": [
     "dist",
