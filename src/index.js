@@ -1,4 +1,4 @@
-/*! Joystick plugin for litecanvas v0.2.1 by Luiz Bills | MIT Licensed */
+/*! Joystick plugin for litecanvas v0.2.3 by Luiz Bills | MIT Licensed */
 export default function plugin(engine) {
   // vector 2d helpers
   const vec = (x = 0, y = 0) => ({ x, y })

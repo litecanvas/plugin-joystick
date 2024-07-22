@@ -11,7 +11,7 @@ Adds a virtual joystick to [litecanvas](https://github.com/litecanvas/game-engin
 ## Basic Usage
 
 ```js
-import litecanvas from "@litecanvas/litecanvas"
+import litecanvas from "litecanvas"
 import pluginJoystick from "@litecanvas/plugin-joystick"
 
 litecanvas({
