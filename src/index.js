@@ -1,4 +1,4 @@
-/*! Joystick plugin for litecanvas v0.2.3 by Luiz Bills | MIT Licensed */
+/*! Joystick plugin for litecanvas v0.3.0 by Luiz Bills | MIT Licensed */
 export default function plugin(engine) {
   // vector 2d helpers
   const vec = (x = 0, y = 0) => ({ x, y })
@@ -9,7 +9,7 @@ export default function plugin(engine) {
 
   let _zone = [],
     _disableDefaultZone = engine.listen("resized", updateDefaultZone),
-    position = vec(0, 0)
+    _position = vec(0, 0)
 
   engine.listen("update", updateJoystick, true)
   engine.listen("draw", drawJoystick)
@@ -17,7 +17,8 @@ export default function plugin(engine) {
   updateDefaultZone()
 
   const joystick = {
-    active: false,
+    enabled: true,
+    active: true,
 
     vector: vec(0, 0),
     angle: 0,
@@ -28,14 +29,22 @@ export default function plugin(engine) {
     // TODO: only move on the Y axis
     lockY: false,
 
+    tapSize: 100,
+
     // Set a zone to activate the joystick
     // by default is the entire game screen
-    zone(x, y, width, height) {
-      _zone = [x, y, width, height]
+    set zone(value) {
+      const [x, y, width, height] = value
+      _zone = [~~x, ~~y, ~~width, ~~height]
+
       if (_disableDefaultZone) {
         _disableDefaultZone()
         _disableDefaultZone = null
       }
+    },
+
+    get zone() {
+      return _zone
     },
 
     style: {
@@ -49,34 +58,35 @@ export default function plugin(engine) {
       engine.circfill(position.x, position.y, style.size, style.color)
       engine.circfill(vector.x, vector.y, style.size * 0.4, style.color)
     },
+
+    checkTap() {
+      return engine.colrect(
+        engine.TAPX,
+        engine.TAPY,
+        joystick.tapSize,
+        joystick.tapSize,
+        _zone[0],
+        _zone[1],
+        _zone[2],
+        _zone[3]
+      )
+    },
   }
 
   function updateJoystick() {
+    if (!joystick.enabled) return
+
     if (engine.TAPPING) {
       const tapx = engine.TAPX,
         tapy = engine.TAPY
 
-      if (!joystick.active) {
-        if (
-          // check if the tap was inside the joystick zone
-          engine.colrect(
-            tapx,
-            tapy,
-            100,
-            100,
-            _zone[0],
-            _zone[1],
-            _zone[2],
-            _zone[3]
-          )
-        ) {
-          joystick.active = true
-          position.x = tapx
-          position.y = tapy
-        }
+      if (!joystick.active && joystick.checkTap()) {
+        joystick.active = true
+        _position.x = tapx
+        _position.y = tapy
       }
 
-      let tap = vecadd(vec(tapx, tapy), vecscale(position, -1))
+      let tap = vecadd(vec(tapx, tapy), vecscale(_position, -1))
       let dist = veclen(tap)
       let force = abs(dist / joystick.style.size)
 
@@ -85,27 +95,29 @@ export default function plugin(engine) {
         tap = vecscale(tap, ratio)
       }
 
-      joystick.vector = vecadd(position, tap)
+      joystick.vector = vecadd(_position, tap)
       joystick.angle = atan2(tap.y, tap.x)
       joystick.force = force
-    } else {
+    } else if (joystick.active) {
       joystick.active = false
       if (_zone) {
-        position.x = _zone[0] + _zone[2] / 2
-        position.y = _zone[1] + _zone[3] / 2
+        _position.x = _zone[0] + _zone[2] / 2
+        _position.y = _zone[1] + _zone[3] / 2
       }
     }
   }
 
   function drawJoystick() {
+    if (!joystick.enabled) return
+
     let style = joystick.style
     let opacity = style[joystick.active ? "opacityActive" : "opacityInactive"]
     if (opacity > 0) {
       engine.push()
       engine.alpha(opacity)
       joystick.draw(
-        position,
-        joystick.active ? joystick.vector : position,
+        _position,
+        joystick.active ? joystick.vector : _position,
         style
       )
       engine.pop()

@@ -25,16 +25,19 @@
 
       use(pluginJoystick) // load the plugin
 
+      function getJoystickZone() {
+        return [0, CENTERY, WIDTH / 2, HEIGHT / 2]
+      }
+
       function resized() {
-        // set a custom zone from half the screen down
-        JOYSTICK.zone(0, CENTERY, WIDTH, HEIGHT / 2)
+        JOYSTICK.zone = getJoystickZone()
       }
 
       function init() {
         // customize the joystick
         JOYSTICK.style.color = 5
         JOYSTICK.style.size = HEIGHT / 12
-        JOYSTICK.zone(0, CENTERY, WIDTH, HEIGHT / 2)
+
         JOYSTICK.style.opacityInactive = 0.1
         JOYSTICK.style.opacityActive = 0.6
 
@@ -52,12 +55,16 @@
           const force = min(JOYSTICK.force, 2)
           actor.x += actor.speed * force * cos(JOYSTICK.angle) * dt
           actor.y += actor.speed * force * sin(JOYSTICK.angle) * dt
+        } else if (TAPPED && !JOYSTICK.checkTap()) {
+          actor.x = TAPX
+          actor.y = TAPY
         }
       }
 
       function draw() {
         cls(1)
         circfill(actor.x, actor.y, 32, 6)
+        rect(...JOYSTICK.zone, 4)
         // print(10, 10, FPS, 4)
       }
     </script>
