@@ -1,4 +1,4 @@
-/*! Joystick plugin for litecanvas v0.3.0 by Luiz Bills | MIT Licensed */
+/*! Joystick plugin for litecanvas v0.4.1 by Luiz Bills | MIT Licensed */
 window.pluginJoystick = plugin
 
 export default function plugin(engine, _, config = {}) {

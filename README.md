@@ -35,7 +35,7 @@ function update(dt) {
 }
 
 function draw() {
-  clear(1)
+  cls(1)
   circfill(actor.x, actor.y, 32, 6)
 }
 ```
