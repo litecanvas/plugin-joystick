@@ -1,5 +1,7 @@
 /*! Joystick plugin for litecanvas v0.3.0 by Luiz Bills | MIT Licensed */
-export default function plugin(engine) {
+window.pluginJoystick = plugin
+
+export default function plugin(engine, _, config = {}) {
   // vector 2d helpers
   const vec = (x = 0, y = 0) => ({ x, y })
   const veclen = (v) => vecdot(v, v) ** 0.5
@@ -8,17 +10,13 @@ export default function plugin(engine) {
   const vecadd = (a, b) => vec(a.x + b.x, a.y + b.y)
 
   let _zone = [],
-    _disableDefaultZone = engine.listen("resized", updateDefaultZone),
-    _position = vec(0, 0)
-
-  engine.listen("update", updateJoystick, true)
-  engine.listen("draw", drawJoystick)
-
-  updateDefaultZone()
+    _disableDefaultZone,
+    _position = vec(0, 0),
+    _tapID = null
 
   const joystick = {
     enabled: true,
-    active: true,
+    active: false,
 
     vector: vec(0, 0),
     angle: 0,
@@ -29,7 +27,7 @@ export default function plugin(engine) {
     // TODO: only move on the Y axis
     lockY: false,
 
-    tapSize: 100,
+    tapSize: 25,
 
     // Set a zone to activate the joystick
     // by default is the entire game screen
@@ -48,10 +46,10 @@ export default function plugin(engine) {
     },
 
     style: {
-      color: 3,
-      size: 100,
-      opacityActive: 0.5,
-      opacityInactive: 0,
+      color: config.color ?? 3,
+      size: config.size ?? 100,
+      opacityActive: config.opacityActive ?? 0.5,
+      opacityInactive: config.opacityInactive ?? 0,
     },
 
     draw(position, vector, style) {
@@ -59,10 +57,10 @@ export default function plugin(engine) {
       engine.circfill(vector.x, vector.y, style.size * 0.4, style.color)
     },
 
-    checkTap() {
+    checkTap(x, y) {
       return engine.colrect(
-        engine.TAPX,
-        engine.TAPY,
+        x,
+        y,
         joystick.tapSize,
         joystick.tapSize,
         _zone[0],
@@ -71,40 +69,65 @@ export default function plugin(engine) {
         _zone[3]
       )
     },
-  }
 
-  function updateJoystick() {
-    if (!joystick.enabled) return
-
-    if (engine.TAPPING) {
-      const tapx = engine.TAPX,
-        tapy = engine.TAPY
-
-      if (!joystick.active && joystick.checkTap()) {
-        joystick.active = true
-        _position.x = tapx
-        _position.y = tapy
-      }
-
-      let tap = vecadd(vec(tapx, tapy), vecscale(_position, -1))
-      let dist = veclen(tap)
-      let force = abs(dist / joystick.style.size)
-
-      if (dist > joystick.style.size) {
-        let ratio = joystick.style.size / dist
-        tap = vecscale(tap, ratio)
-      }
-
-      joystick.vector = vecadd(_position, tap)
-      joystick.angle = atan2(tap.y, tap.x)
-      joystick.force = force
-    } else if (joystick.active) {
-      joystick.active = false
+    reset() {
+      _tapID = null
+      this.active = false
       if (_zone) {
         _position.x = _zone[0] + _zone[2] / 2
         _position.y = _zone[1] + _zone[3] / 2
       }
+    },
+  }
+
+  engine.listen("tap", startJoystick, true)
+  engine.listen("untap", stopJoystick, true)
+  engine.listen("tapping", updateJoystick, true)
+  engine.listen("draw", drawJoystick)
+
+  _disableDefaultZone = engine.listen("resized", updateDefaultZone)
+
+  if (config.zone) {
+    joystick.zone = config.zone
+  } else {
+    updateDefaultZone()
+  }
+
+  joystick.reset()
+
+  function startJoystick(x, y, id) {
+    if (!joystick.enabled) return
+
+    if (null === _tapID && joystick.checkTap(x, y)) {
+      _tapID = id
+      joystick.active = true
+      _position.x = x
+      _position.y = y
     }
+  }
+
+  function stopJoystick(x, y, id) {
+    if (_tapID === id) {
+      joystick.reset()
+    }
+  }
+
+  function updateJoystick(tapx, tapy, id) {
+    if (!joystick.enabled) return
+    if (id !== _tapID) return
+
+    let tap = vecadd(vec(tapx, tapy), vecscale(_position, -1))
+    let dist = veclen(tap)
+    let force = abs(dist / joystick.style.size)
+
+    if (dist > joystick.style.size) {
+      let ratio = joystick.style.size / dist
+      tap = vecscale(tap, ratio)
+    }
+
+    joystick.vector = vecadd(_position, tap)
+    joystick.angle = atan2(tap.y, tap.x)
+    joystick.force = force
   }
 
   function drawJoystick() {
@@ -130,5 +153,3 @@ export default function plugin(engine) {
 
   return { JOYSTICK: joystick }
 }
-
-window.pluginJoystick = plugin
