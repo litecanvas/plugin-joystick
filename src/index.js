@@ -1,4 +1,4 @@
-/*! Joystick plugin for litecanvas v0.4.1 by Luiz Bills | MIT Licensed */
+/*! Joystick plugin for litecanvas v0.4.2 by Luiz Bills | MIT Licensed */
 window.pluginJoystick = plugin
 
 export default function plugin(engine, _, config = {}) {
@@ -101,8 +101,8 @@ export default function plugin(engine, _, config = {}) {
     if (null === _tapID && joystick.checkTap(x, y)) {
       _tapID = id
       joystick.active = true
-      _position.x = x
-      _position.y = y
+      _position.x = joystick.vector.x = x
+      _position.y = joystick.vector.y = y
     }
   }
 
