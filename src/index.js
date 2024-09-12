@@ -80,10 +80,10 @@ export default function plugin(engine, _, config = {}) {
     },
   }
 
-  engine.listen("tap", startJoystick, true)
-  engine.listen("untap", stopJoystick, true)
-  engine.listen("tapping", updateJoystick, true)
-  engine.listen("draw", drawJoystick)
+  engine.listen("before:tap", startJoystick)
+  engine.listen("before:untap", stopJoystick)
+  engine.listen("before:tapping", updateJoystick)
+  engine.listen("after:draw", drawJoystick)
 
   _disableDefaultZone = engine.listen("resized", updateDefaultZone)
 
