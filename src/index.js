@@ -166,10 +166,12 @@ export default function plugin(engine, config = {}) {
       _position.x = _zone[0] + margin + _config.position[0] * width
       _position.y = _zone[1] + margin + _config.position[1] * height
 
-      if (_config.enabled) {
-        joystick.enable()
-      } else {
-        joystick.disable()
+      if (config) {
+        if (_config.enabled) {
+          joystick.enable()
+        } else {
+          joystick.disable()
+        }
       }
 
       _tapID = null

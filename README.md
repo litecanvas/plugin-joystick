@@ -1,6 +1,10 @@
-# Joystick plugin for litecanvas
+# Joystick plugin for Litecanvas
 
 Adds a virtual joystick to [litecanvas](https://github.com/litecanvas/game-engine) games.
+
+<!-- prettier-ignore -->
+> [!TIP]
+> **This plugin is automatically loaded on Litecanvas [playground](https://litecanvas.js.org/).**
 
 ## Install
 
