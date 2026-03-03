@@ -18,28 +18,36 @@ litecanvas({
   loop: { init, update, draw },
 })
 
-use(pluginJoystick) // load the plugin
+function init() {
+  use(pluginJoystick) // load the plugin
 
-actor = {
-  x: CENTERX,
-  y: CENTERY,
-  speed: 100,
+  actor = {
+    x: W / 2,
+    y: H / 2,
+    speed: 100,
+  }
 }
 
 function update(dt) {
-  if (JOYSTICK.active) {
-    const force = min(JOYSTICK.force, 2)
-    actor.x += actor.speed * force * cos(JOYSTICK.angle) * dt
-    actor.y += actor.speed * force * sin(JOYSTICK.angle) * dt
+  if (joystick.on) {
+    actor.x += actor.speed * joystick.force * cos(joystick.angle) * dt
+    actor.y += actor.speed * joystick.force * sin(joystick.angle) * dt
   }
 }
 
 function draw() {
-  cls(1)
-  circfill(actor.x, actor.y, 32, 6)
+  cls(0)
+  circfill(actor.x, actor.y, 32, 3)
 }
 ```
 
-[See this demo in litecanvas playground](https://litecanvas.js.org?c=eJx1UdFOwjAUfd9X3Le1WLeJiQ8kGA0SAxpIhAd5XLoOC6Vb2juEmP27oys6En1pem7PueecVEkUPNX71BIaBHmlOcpCg9QSCYWvAEAVabbgRpZIwg%2FE0g7iuNLldh3xYhc%2FqJ8FcamqtdTXm%2BJoUfJtnEmL7og2NmRAjLAUhvduK0BlBWkVUy%2BgzbxuUgCkHAsDQ888DGA0ni3Hb%2B%2FM4eMZr1psSyGyAfST5ITroO4UqcosRUEybMvIHMjr%2FPFpMnumYARWRvvpdL5aLCejl6jxlntBvTcvtEXIC8NFk2cn9S%2FRDRncUEd0kaMDXA391aWCntf2mk22Y6LXqvHoQYYd9fF%2Fte06X6ovC2cm%2FfQ%2Fx5UlLt0frQHFAUnCEhb6lyiKwhOZS8NzqRTxjdg5HIPbPoM7GtTfQDqpSw%3D%3D)
+[Live Demo](https://litecanvas.js.org?c=eJyNkM1OwzAQhO9%2BijnaEDWh3CL13jfgbGynGMw6sjfQCOXdcdKElgMSB0vj%2FflmtMGzM5o%2BdJZKiG4gwz4SPHmWCl8CqGv49z4m1sQtHOnn4MAvDq9xzOzNG8p8H%2FR4SnEgWza2xu4yPIMBbTgmHBYkcG7xVO%2BrRY8tjpvOvXO2xUPTzP9JTDeZht5qdtLyJZfvIH%2BcIqmVvPjszrg%2FrHJB4u6aqovJuFIwMV8Bmk7BqVK1fIMZ%2F4HJnv7C%2FM5vk%2F5cb2pClo2ahU%2Bm8yHINXa1GVd43JenxPQN%2FcCB8A%3D%3D)
 
-For more details, check the [demo](demo/index.html).
+For more advance usage, check the [samples](samples) code or clone this repository to run them locally:
+
+```
+git clone https://github.com/litecanvas/plugin-joystick
+cd plugin-joystick
+npm install
+npm run dev
+```

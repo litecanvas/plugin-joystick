@@ -1,108 +1,197 @@
-/*! Joystick plugin for litecanvas v0.4.2 by Luiz Bills | MIT Licensed */
-window.pluginJoystick = plugin
+import "litecanvas"
+import { colrectcirc, Vector, vec, vecSet } from "@litecanvas/utils"
 
-export default function plugin(engine, _, config = {}) {
-  // vector 2d helpers
-  const vec = (x = 0, y = 0) => ({ x, y })
-  const veclen = (v) => vecdot(v, v) ** 0.5
-  const vecdot = (a, b) => a.x * b.x + a.y * b.y
-  const vecscale = (v, n) => vec(v.x * n, v.y * n)
-  const vecadd = (a, b) => vec(a.x + b.x, a.y + b.y)
+const defaults = {
+  // if false, you must enable manually with joystick.enable()
+  enabled: true,
+
+  color: 1,
+  size: 64,
+
+  position: [0.5, 0.5],
+  fixed: false,
+
+  opacityActive: 1,
+  opacityInactive: 0,
+
+  // default is the whole game screen
+  zone: null,
+
+  /**
+   * null = any direction
+   *
+   * @type {"x"|"y"|null} lock
+   */
+  lock: null,
+
+  /**
+   * @type {null|(position:Vector, vector:Vector, style:object)=>void}
+   */
+  render: null,
+}
+
+export default function plugin(engine, config = {}) {
+  const initialized = engine.stat(1)
+
+  if (!initialized) {
+    throw 'Plugin Joystick should be loaded after or inside of the "init" event'
+  }
+
+  const _events = {
+      "before:tap": startJoystick,
+      "before:untap": stopJoystick,
+      "before:tapping": updateJoystick,
+      "after:draw": drawJoystick,
+    },
+    _listeners = []
 
   let _zone = [],
-    _disableDefaultZone,
+    _isFullscreenZone = true,
     _position = vec(0, 0),
-    _tapID = null
+    _tapID,
+    _enabled = false,
+    _config = null
 
   const joystick = {
-    enabled: true,
+    /**
+     * check if the joystick is active
+     */
+    on: false,
+
+    /**
+     * only for backwards compatibility
+     * @deprecated
+     */
     active: false,
 
     vector: vec(0, 0),
     angle: 0,
     force: 0,
 
-    //  TODO: only move on the X axis
-    lockX: false,
+    // TODO: only move on the X axis
+    // lockX: false,
     // TODO: only move on the Y axis
-    lockY: false,
+    // lockY: false,
 
-    tapSize: 25,
+    tapSize: 16,
+    stickSize: 0.5,
+    style: null,
+
+    /**
+     *
+     * @param {Vector} position
+     * @param {Vector} vector
+     * @param {object} style
+     * @param {LitecanvasInstance} engine
+     */
+    draw(position, vector, style, engine) {
+      engine.linewidth(joystick.style.border)
+      engine.circ(position.x, position.y, style.size, style.color)
+      engine.circfill(
+        vector.x,
+        vector.y,
+        style.size * joystick.stickSize,
+        style.color
+      )
+    },
+
+    checkTap(x, y) {
+      return colrectcirc(
+        _zone[0],
+        _zone[1],
+        _zone[2],
+        _zone[3],
+        x,
+        y,
+        joystick.tapSize
+      )
+    },
 
     // Set a zone to activate the joystick
     // by default is the entire game screen
-    set zone(value) {
-      const [x, y, width, height] = value
-      _zone = [~~x, ~~y, ~~width, ~~height]
-
-      if (_disableDefaultZone) {
-        _disableDefaultZone()
-        _disableDefaultZone = null
-      }
+    set zone(arr) {
+      const fullscreen = !Array.isArray(arr) || arr.length === 0
+      const [x, y, w, h] = !fullscreen ? arr : getFullScreenZone()
+      _zone = [~~x, ~~y, ~~w, ~~h]
+      _isFullscreenZone = fullscreen
     },
 
     get zone() {
       return _zone
     },
 
-    style: {
-      color: config.color ?? 3,
-      size: config.size ?? 100,
-      opacityActive: config.opacityActive ?? 0.5,
-      opacityInactive: config.opacityInactive ?? 0,
-    },
-
-    draw(position, vector, style) {
-      engine.circfill(position.x, position.y, style.size, style.color)
-      engine.circfill(vector.x, vector.y, style.size * 0.4, style.color)
-    },
-
-    checkTap(x, y) {
-      return engine.colrect(
-        x,
-        y,
-        joystick.tapSize,
-        joystick.tapSize,
-        _zone[0],
-        _zone[1],
-        _zone[2],
-        _zone[3]
-      )
-    },
-
-    reset() {
-      _tapID = null
-      this.active = false
-      if (_zone) {
-        _position.x = _zone[0] + _zone[2] / 2
-        _position.y = _zone[1] + _zone[3] / 2
+    enable() {
+      if (!_enabled) {
+        for (const [event, callback] of Object.entries(_events)) {
+          _listeners.push(engine.listen(event, callback))
+        }
+        _enabled = true
       }
     },
+
+    disable() {
+      if (_enabled) {
+        for (const unlisten of _listeners) {
+          unlisten()
+        }
+        _listeners.length = 0
+        _enabled = joystick.active = joystick.on = false
+        _tapID = null
+      }
+    },
+
+    reset(config) {
+      if (config) {
+        _config = Object.assign({}, _config ?? defaults, config)
+      }
+
+      if (!this.style || config) {
+        this.style = {
+          color: _config.color,
+          size: _config.size,
+          opacityActive: _config.opacityActive,
+          opacityInactive: _config.opacityInactive,
+          border: 2,
+        }
+      }
+
+      if (!_zone || config) {
+        joystick.zone = _config.zone
+      }
+
+      const margin = this.style.size + this.style.border
+      const width = _zone[2] - 2 * margin
+      const height = _zone[3] - 2 * margin
+
+      _position.x = _zone[0] + margin + _config.position[0] * width
+      _position.y = _zone[1] + margin + _config.position[1] * height
+
+      if (_config.enabled) {
+        joystick.enable()
+      } else {
+        joystick.disable()
+      }
+
+      _tapID = null
+      this.active = this.on = false
+    },
   }
-
-  engine.listen("before:tap", startJoystick)
-  engine.listen("before:untap", stopJoystick)
-  engine.listen("before:tapping", updateJoystick)
-  engine.listen("after:draw", drawJoystick)
-
-  _disableDefaultZone = engine.listen("resized", updateDefaultZone)
-
-  if (config.zone) {
-    joystick.zone = config.zone
-  } else {
-    updateDefaultZone()
-  }
-
-  joystick.reset()
 
   function startJoystick(x, y, id) {
-    if (!joystick.enabled) return
-
     if (null === _tapID && joystick.checkTap(x, y)) {
       _tapID = id
-      joystick.active = true
-      _position.x = joystick.vector.x = x
-      _position.y = joystick.vector.y = y
+      joystick.active = joystick.on = true
+
+      if (!_config.fixed) {
+        _position.x = x
+        _position.y = y
+      }
+
+      joystick.vector.x = x
+      joystick.vector.y = y
+      joystick.force = joystick.angle = 0
+
+      updateJoystick(x, y, id)
     }
   }
 
@@ -113,43 +202,68 @@ export default function plugin(engine, _, config = {}) {
   }
 
   function updateJoystick(tapx, tapy, id) {
-    if (!joystick.enabled) return
     if (id !== _tapID) return
 
-    let tap = vecadd(vec(tapx, tapy), vecscale(_position, -1))
-    let dist = veclen(tap)
-    let force = abs(dist / joystick.style.size)
+    const style = joystick.style
+    const vector = joystick.vector
 
-    if (dist > joystick.style.size) {
-      let ratio = joystick.style.size / dist
-      tap = vecscale(tap, ratio)
-    }
+    const dx = tapx - _position.x
+    const dy = tapy - _position.y
+    const dist = Math.hypot(dx, dy)
+    const limit = Math.min(dist, style.size)
 
-    joystick.vector = vecadd(_position, tap)
-    joystick.angle = atan2(tap.y, tap.x)
-    joystick.force = force
+    joystick.angle = Math.atan2(
+      "x" === _config.lock ? 0 : dy,
+      "y" === _config.lock ? 0 : dx
+    )
+    joystick.force = Math.abs(limit / style.size)
+
+    vecSet(
+      vector,
+      _position.x +
+        Math.cos(joystick.angle) * ("y" === _config.lock ? 0 : limit),
+      _position.y +
+        Math.sin(joystick.angle) * ("x" === _config.lock ? 0 : limit)
+    )
+
+    engine.emit("joystick-update")
   }
 
   function drawJoystick() {
-    if (!joystick.enabled) return
-
-    let style = joystick.style
-    let opacity = style[joystick.active ? "opacityActive" : "opacityInactive"]
+    let opacity =
+      joystick.style[joystick.on ? "opacityActive" : "opacityInactive"]
     if (opacity > 0) {
       engine.push()
       engine.alpha(opacity)
-      joystick.draw(
+
+      const render = _config.render ? _config.render : joystick.draw
+      render(
         _position,
-        joystick.active ? joystick.vector : _position,
-        style
+        joystick.on ? joystick.vector : _position,
+        joystick.style,
+        engine
       )
       engine.pop()
     }
   }
 
-  function updateDefaultZone() {
-    _zone = [0, 0, engine.WIDTH, engine.HEIGHT]
+  engine.listen("resized", () => {
+    if (_isFullscreenZone) {
+      _zone = getFullScreenZone()
+    }
+  })
+
+  function getFullScreenZone() {
+    return [0, 0, engine.W, engine.H]
   }
 
-  return { JOYSTICK: joystick }
+  joystick.reset(config)
+
+  return {
+    // recommended
+    joystick,
+
+    // only for backwards compatibility
+    JOYSTICK: joystick,
+  }
 }

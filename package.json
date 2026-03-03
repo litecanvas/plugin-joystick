@@ -1,6 +1,6 @@
 {
   "name": "@litecanvas/plugin-joystick",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Virtual joystick for litecanvas games based on NippleJS",
   "author": "Luiz Bills <luizbills@pm.me>",
   "license": "MIT",
@@ -20,15 +20,18 @@
     "gamedev"
   ],
   "scripts": {
-    "dev": "esbuild src/index.js --bundle --watch --outfile=dist/dist.js --servedir=.",
-    "build": "esbuild src/index.js --bundle --minify --outfile=dist/dist.js",
+    "dev": "esbuild src/_web.js --bundle --watch --outfile=dist/dist.js --servedir=.",
+    "build": "esbuild src/_web.js --drop-labels=DEV --bundle --minify --outfile=dist/dist.js",
     "prepare": "npm run build"
   },
+  "dependencies": {
+    "@litecanvas/utils": "^0.48.0"
+  },
   "devDependencies": {
-    "esbuild": "^0.20.1"
+    "esbuild": "^0.27.3"
   },
   "peerDependencies": {
-    "litecanvas": "*"
+    "litecanvas": "latest"
   },
   "files": [
     "dist",

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,
+    user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0"
+    />
+    <title>litecanvas Game</title>
+    <style type="text/css">
+      body {
+        background: #000;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://unpkg.com/litecanvas"></script>
+    <script src="https://unpkg.com/@litecanvas/plugin-asset-loader/dist/dist.min.js"></script>
+    <script src="../dist/dist.js"></script>
+    <script>
+      let actor, joystickPad, joystickInner
+
+      litecanvas()
+
+      function init() {
+        use(pluginAssetLoader)
+
+        use(pluginJoystick, {
+          // our custom renderer function
+          render: drawJoystick,
+
+          size: 64, // 64 because the image has 128x128
+          opacityActive: 0.9,
+          opacityInactive: 0.1,
+          position: [0.1, 0.9],
+          fixed: true,
+        })
+
+        actor = {
+          x: W / 2,
+          y: H / 2,
+          speed: 200,
+        }
+
+        loadImage("assets/joystick_pad.png", (res) => {
+          joystickPad = res
+        })
+
+        loadImage("assets/joystick_inner.png", (res) => {
+          joystickInner = res
+        })
+      }
+
+      function update(dt) {
+        if (LOADING) return
+
+        if (joystick.on) {
+          const force = min(joystick.force, 1)
+          actor.x += actor.speed * force * cos(joystick.angle) * dt
+          actor.y += actor.speed * force * sin(joystick.angle) * dt
+        }
+      }
+
+      function draw() {
+        cls(0)
+
+        if (LOADING) return text(10, 10, "Loading...")
+
+        circfill(actor.x, actor.y, 32, 2)
+      }
+
+      function drawJoystick(position, vector, style) {
+        if (LOADING) return
+
+        image(
+          position.x - joystickPad.width / 2,
+          position.y - joystickPad.height / 2,
+          joystickPad
+        )
+        image(
+          vector.x - joystickInner.width / 2,
+          vector.y - joystickInner.height / 2,
+          joystickInner
+        )
+      }
+    </script>
+  </body>
+</html>
