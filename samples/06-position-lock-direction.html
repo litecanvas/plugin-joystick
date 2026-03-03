@@ -37,7 +37,7 @@
         actor = {
           x: W / 2,
           y: H / 2,
-          speed: 200,
+          speed: 100,
         }
       }
 
@@ -50,7 +50,7 @@
         }
 
         if (joystick.on) {
-          const force = min(joystick.force, 1)
+          const force = min(joystick.force, 3)
           actor.x += actor.speed * force * cos(joystick.angle) * dt
           actor.y += actor.speed * force * sin(joystick.angle) * dt
         }

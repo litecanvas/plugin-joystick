@@ -218,7 +218,7 @@ export default function plugin(engine, config = {}) {
       "x" === _config.lock ? 0 : dy,
       "y" === _config.lock ? 0 : dx
     )
-    joystick.force = Math.abs(limit / style.size)
+    joystick.force = Math.abs(dist / style.size)
 
     vecSet(
       vector,
