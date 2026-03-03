@@ -45,7 +45,7 @@ function draw() {
 }
 ```
 
-[Live Demo](https://litecanvas.js.org?c=eJyNkM1OwzAQhO9%2BijnaEDWh3CL13jfgbGynGMw6sjfQCOXdcdKElgMSB0vj%2FflmtMGzM5o%2BdJZKiG4gwz4SPHmWCl8CqGv49z4m1sQtHOnn4MAvDq9xzOzNG8p8H%2FR4SnEgWza2xu4yPIMBbTgmHBYkcG7xVO%2BrRY8tjpvOvXO2xUPTzP9JTDeZht5qdtLyJZfvIH%2BcIqmVvPjszrg%2FrHJB4u6aqovJuFIwMV8Bmk7BqVK1fIMZ%2F4HJnv7C%2FM5vk%2F5cb2pClo2ahU%2Bm8yHINXa1GVd43JenxPQN%2FcCB8A%3D%3D)
+[Live Demo](https://litecanvas.js.org?c=eJyNkstuwyAQRff%2BillCGzlW0kWFlEV3%2BYOsKR67tJRBgJO4lf%2B9GDsPq6rUBRJzuXPmIYyOqKQ9ysB4UTSdVVGTBW11ZBy%2BC4D1GvSnIx%2BljQLQyleDEN8Q3qkPUasPSH5nZN966mydMi4P5WQewRlDbmRLI8CjItvodsG5z%2FQYMLKxPMwlawHRd7jKkiJDXsBmioL%2BQgFPz1NETiod%2B5c0yDHJVblN8pB7kCqShx1M3LOAw3pG9AL2l3twOFbbVNUYD8Vwt5fO1TIiq%2BO0G90Au%2FZMls%2FkXKc8w%2BNuvmYkPNzma8grTIKicANI2xrkSa3jHab%2FByZo%2BzcmrTqQwdJQy5aZPL8vWt7ByUvH5nAF1QoOfNHNwtFnx57%2FWlTt5Wn%2BQMoEVo0Opb1qtDE3%2BhWy3aTDi%2BEHpGTIIg%3D%3D)
 
 For more advance usage, check the [samples](samples) code or clone this repository to run them locally:
 
