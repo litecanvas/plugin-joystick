@@ -34,7 +34,7 @@ function init() {
 
 function update(dt) {
   if (joystick.on) {
-    const [angle, force] = joystick.get()
+    const { angle, force } = joystick
     actor.x += actor.speed * force * cos(angle) * dt
     actor.y += actor.speed * force * sin(angle) * dt
   }
@@ -46,7 +46,7 @@ function draw() {
 }
 ```
 
-[Live Demo](https://litecanvas.js.org?c=eJx1ks1ugzAQhO88xRztFiUo6aFCyqG3vEEOVQ%2BuMdSNayN780Mr3r3GkDQo6gHstWe%2BHVYYTUoKexSB8SyrD1aSdhbaamIcPxmwXEJ%2Ftc6TsFRCWfFuFOhD4dN1gbTcI%2BpbI7rGu4OtouNysRjFAzhhXDuwhSnhlXS21s2Mc%2Bv0KihiQ3tAOuN8iVWeqqC%2FVYmn57FyrZCaupeY%2BhiPi8U6HvepoZDkPDYYIecSu%2BWE6EpsL%2FvQKlVFeFEMdZ%2F1N0M4tJUgxSoaB6FrsGtAZzku8WwgvArbGJWjdl6qt9j2qmzih%2FCkTK8Ua3HG42bapgR4GJ1xlS6wBOOxqOjG1P1vCtremWbtNjh50bKpzFHk2PEZe6bokmLL72ZSeXGafgxpAisGhdRe1tqYP%2FoVsl7Fh2f9Lz5dt0U%3D)
+[Live Demo](https://litecanvas.js.org?c=eJx1ks1uwyAQhO9%2BijlCaiVW0kNlKYfe8gY5U4xTWgIWbH7cyO9ejJ3UVtSDEQMz3y4rG01KCnsWgfEsq09WknYW2mpiHLcMWK2gj43zJCyVUFZ8GAX6VPhybSAtvxH9jRHtwbuTrWLifrEczD04YVzTs4Up4ZV0ttaHGWea9CooYn15QDrjfIl1nlTQP6rE69ugXCOkpvY9dn2Ox8VyE4%2B7VFBIch5bDJBrif1qRLQldvd9aJSqIrwoet1l3WQIp6YSpFhFwyB0DfZo0FmOe3s2EG4Q9mBUjtp5qdDFwpN3AWlJLS2veNmO21QdizG0iKzAEodHUdEk1P4fCto%2BhWbltrh40bBR5ihy7PmMPXO0ybHjT%2FOovLiMP4U0gRW9Q2ova23MH%2F0B2azjx7PuF0U2tgY%3D)
 
 For more advance usage, check the [samples](samples) code or clone this repository to run them locally:
 

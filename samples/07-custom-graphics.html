@@ -57,7 +57,7 @@
         if (LOADING) return
 
         if (joystick.on) {
-          const [angle, force] = joystick.get()
+          const { angle, force } = joystick
           actor.x += actor.speed * force * cos(angle) * dt
           actor.y += actor.speed * force * sin(angle) * dt
         }

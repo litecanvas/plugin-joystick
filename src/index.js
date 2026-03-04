@@ -98,10 +98,6 @@ export default function plugin(engine, config = {}) {
       )
     },
 
-    get() {
-      return [this.angle, this.force, this.vector]
-    },
-
     checkTap(x, y) {
       return colrectcirc(
         _zone[0],
