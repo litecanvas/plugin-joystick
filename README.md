@@ -28,7 +28,7 @@ function init() {
   actor = {
     x: W / 2,
     y: H / 2,
-    speed: 100,
+    speed: 200,
   }
 }
 
