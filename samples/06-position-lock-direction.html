@@ -50,9 +50,9 @@
         }
 
         if (joystick.on) {
-          const force = min(joystick.force, 3)
-          actor.x += actor.speed * force * cos(joystick.angle) * dt
-          actor.y += actor.speed * force * sin(joystick.angle) * dt
+          const [angle, force] = joystick.get()
+          actor.x += actor.speed * force * cos(angle) * dt
+          actor.y += actor.speed * force * sin(angle) * dt
         }
       }
 

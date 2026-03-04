@@ -31,7 +31,7 @@
           // our custom renderer function
           render: drawJoystick,
 
-          size: 64, // 64 because the image has 128x128
+          size: 64, // 64 because the pad image has 128x128
           opacityActive: 0.9,
           opacityInactive: 0.1,
           position: [0.1, 0.9],
@@ -57,9 +57,9 @@
         if (LOADING) return
 
         if (joystick.on) {
-          const force = min(joystick.force, 3)
-          actor.x += actor.speed * force * cos(joystick.angle) * dt
-          actor.y += actor.speed * force * sin(joystick.angle) * dt
+          const [angle, force] = joystick.get()
+          actor.x += actor.speed * force * cos(angle) * dt
+          actor.y += actor.speed * force * sin(angle) * dt
         }
       }
 
@@ -68,7 +68,7 @@
 
         if (LOADING) return text(10, 10, "Loading...")
 
-        circfill(actor.x, actor.y, 32, 2)
+        circfill(actor.x, actor.y, 32, 3)
       }
 
       function drawJoystick(position, vector, style) {
@@ -79,6 +79,7 @@
           position.y - joystickPad.height / 2,
           joystickPad
         )
+
         image(
           vector.x - joystickInner.width / 2,
           vector.y - joystickInner.height / 2,

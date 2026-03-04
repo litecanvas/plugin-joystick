@@ -35,15 +35,20 @@
 
       function update(dt) {
         if (joystick.on) {
-          const force = min(joystick.force, 3)
-          actor.x += actor.speed * joystick.force * cos(joystick.angle) * dt
-          actor.y += actor.speed * joystick.force * sin(joystick.angle) * dt
+          const [angle, force] = joystick.get()
+
+          actor.x += actor.speed * force * cos(angle) * dt
+          actor.x = wrap(actor.x, 0, W)
+
+          actor.y += actor.speed * force * sin(angle) * dt
+          actor.y = wrap(actor.y, 0, H)
         }
       }
 
       function draw() {
         cls(0)
         circfill(actor.x, actor.y, 32, 3)
+        text(10, 10, "speed: " + round(actor.speed * joystick.force))
       }
     </script>
   </body>

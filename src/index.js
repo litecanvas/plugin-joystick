@@ -1,6 +1,8 @@
 import "litecanvas"
 import { colrectcirc, Vector, vec, vecSet } from "@litecanvas/utils"
 
+const math = Math
+
 const defaults = {
   // if false, you must enable manually with joystick.enable()
   enabled: true,
@@ -67,6 +69,7 @@ export default function plugin(engine, config = {}) {
     vector: vec(0, 0),
     angle: 0,
     force: 0,
+    forceMax: 2,
 
     // TODO: only move on the X axis
     // lockX: false,
@@ -93,6 +96,10 @@ export default function plugin(engine, config = {}) {
         style.size * joystick.stickSize,
         style.color
       )
+    },
+
+    get() {
+      return [this.angle, this.force, this.vector]
     },
 
     checkTap(x, y) {
@@ -176,6 +183,7 @@ export default function plugin(engine, config = {}) {
 
       _tapID = null
       this.active = this.on = false
+      joystick.force = joystick.angle = 0
     },
   }
 
@@ -191,7 +199,6 @@ export default function plugin(engine, config = {}) {
 
       joystick.vector.x = x
       joystick.vector.y = y
-      joystick.force = joystick.angle = 0
 
       updateJoystick(x, y, id)
     }
@@ -209,23 +216,21 @@ export default function plugin(engine, config = {}) {
     const style = joystick.style
     const vector = joystick.vector
 
-    const dx = tapx - _position.x
-    const dy = tapy - _position.y
-    const dist = Math.hypot(dx, dy)
-    const limit = Math.min(dist, style.size)
+    const dx = "y" === _config.lock ? 0 : tapx - _position.x
+    const dy = "x" === _config.lock ? 0 : tapy - _position.y
 
-    joystick.angle = Math.atan2(
-      "x" === _config.lock ? 0 : dy,
-      "y" === _config.lock ? 0 : dx
-    )
-    joystick.force = Math.abs(dist / style.size)
+    const dist = math.hypot(dx, dy)
+    const limit = math.min(dist, style.size)
+
+    joystick.angle = math.atan2(dy, dx)
+    joystick.force = math.min(math.abs(dist / style.size), joystick.forceMax)
 
     vecSet(
       vector,
       _position.x +
-        Math.cos(joystick.angle) * ("y" === _config.lock ? 0 : limit),
+        math.cos(joystick.angle) * ("y" === _config.lock ? 0 : limit),
       _position.y +
-        Math.sin(joystick.angle) * ("x" === _config.lock ? 0 : limit)
+        math.sin(joystick.angle) * ("x" === _config.lock ? 0 : limit)
     )
 
     engine.emit("joystick-update")
