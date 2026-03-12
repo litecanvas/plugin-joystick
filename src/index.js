@@ -1,5 +1,5 @@
 import "litecanvas"
-import { colrectcirc, Vector, vec, vecSet } from "@litecanvas/utils"
+import { colrectcirc, Vector, vec, clamp } from "@litecanvas/utils"
 
 const math = Math
 
@@ -70,6 +70,7 @@ export default function plugin(engine, config = {}) {
     angle: 0,
     force: 0,
     forceMax: 2,
+    forceMin: 0,
 
     // TODO: only move on the X axis
     // lockX: false,
@@ -209,24 +210,30 @@ export default function plugin(engine, config = {}) {
   function updateJoystick(tapx, tapy, id) {
     if (id !== _tapID) return
 
-    const style = joystick.style
-    const vector = joystick.vector
-
     const dx = "y" === _config.lock ? 0 : tapx - _position.x
     const dy = "x" === _config.lock ? 0 : tapy - _position.y
 
     const dist = math.hypot(dx, dy)
-    const limit = math.min(dist, style.size)
+
+    if (dist === 0) return
+
+    const size = joystick.style.size
+    const limit = math.min(dist, size)
+
+    joystick.vector.x =
+      _position.x +
+      math.cos(joystick.angle) * ("y" === _config.lock ? 0 : limit)
+
+    joystick.vector.y =
+      _position.y +
+      math.sin(joystick.angle) * ("x" === _config.lock ? 0 : limit)
 
     joystick.angle = math.atan2(dy, dx)
-    joystick.force = math.min(math.abs(dist / style.size), joystick.forceMax)
 
-    vecSet(
-      vector,
-      _position.x +
-        math.cos(joystick.angle) * ("y" === _config.lock ? 0 : limit),
-      _position.y +
-        math.sin(joystick.angle) * ("x" === _config.lock ? 0 : limit)
+    joystick.force = clamp(
+      math.abs(dist / size),
+      joystick.forceMin,
+      joystick.forceMax
     )
 
     engine.emit("joystick-update")

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,
+    user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0"
+    />
+    <title>litecanvas Game</title>
+    <style type="text/css">
+      body {
+        background: #000;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://unpkg.com/litecanvas"></script>
+    <script src="../dist/dist.js"></script>
+    <script>
+      let actor
+
+      litecanvas()
+
+      function init() {
+        use(pluginJoystick)
+
+        joystick.forceMin = 1
+        joystick.forceMax = 1
+
+        actor = {
+          x: W / 2,
+          y: H / 2,
+          speed: 100,
+        }
+      }
+
+      function update(dt) {
+        if (joystick.on) {
+          const { angle, force } = joystick
+
+          actor.x += actor.speed * force * cos(angle) * dt
+          actor.x = wrap(actor.x, 0, W)
+
+          actor.y += actor.speed * force * sin(angle) * dt
+          actor.y = wrap(actor.y, 0, H)
+        }
+      }
+
+      function draw() {
+        cls(0)
+        circfill(actor.x, actor.y, 32, 3)
+        text(10, 10, "speed: " + round(actor.speed * joystick.force))
+        text(10, 30, "force: " + round(joystick.force))
+      }
+    </script>
+  </body>
+</html>
