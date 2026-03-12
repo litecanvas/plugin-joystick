@@ -18,6 +18,8 @@ Adds a virtual joystick to [litecanvas](https://github.com/litecanvas/game-engin
 import litecanvas from "litecanvas"
 import pluginJoystick from "@litecanvas/plugin-joystick"
 
+let actor
+
 litecanvas({
   loop: { init, update, draw },
 })
