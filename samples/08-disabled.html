@@ -19,14 +19,13 @@
     <script src="https://unpkg.com/litecanvas"></script>
     <script src="../dist/dist.js"></script>
     <script>
-      let actor,
-        enabled = false
+      let actor
 
       litecanvas()
 
       function init() {
         use(pluginJoystick, {
-          enabled: enabled,
+          enabled: false,
         })
 
         actor = {
@@ -38,8 +37,11 @@
 
       function update(dt) {
         if (iskeypressed("space")) {
-          enabled = !enabled
-          enabled ? joystick.enable() : joystick.disable()
+          if (joystick.enabled) {
+            joystick.disable()
+          } else {
+            joystick.enable()
+          }
         }
 
         if (joystick.on) {
@@ -50,12 +52,14 @@
       }
 
       function draw() {
-        cls(enabled ? 2 : 0)
+        cls(joystick.enabled ? 2 : 0)
         circfill(actor.x, actor.y, 32, 3)
         text(
           10,
           10,
-          `Press space to ${enabled ? "Disable" : "Enable"} the joystick`
+          `Press space to ${
+            joystick.enabled ? "Disable" : "Enable"
+          } the joystick`
         )
       }
     </script>
