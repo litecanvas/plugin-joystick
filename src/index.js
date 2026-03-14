@@ -124,6 +124,10 @@ export default function plugin(engine, config = {}) {
       return _zone
     },
 
+    get enabled() {
+      return _enabled
+    },
+
     enable() {
       if (!_enabled) {
         for (const [event, callback] of Object.entries(_events)) {
