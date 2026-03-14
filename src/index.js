@@ -127,7 +127,8 @@ export default function plugin(engine, config = {}) {
     enable() {
       if (!_enabled) {
         for (const [event, callback] of Object.entries(_events)) {
-          _listeners.push(engine.listen(event, callback))
+          engine.listen(event, callback)
+          _listeners.push([event, callback])
         }
         _enabled = true
       }
@@ -135,8 +136,8 @@ export default function plugin(engine, config = {}) {
 
     disable() {
       if (_enabled) {
-        for (const unlisten of _listeners) {
-          unlisten()
+        for (const args of _listeners) {
+          engine.unlisten(...args)
         }
         _listeners.length = 0
         _enabled = joystick.active = joystick.on = false
