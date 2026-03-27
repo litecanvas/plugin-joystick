@@ -249,6 +249,7 @@ export default function plugin(engine, config = {}) {
       joystick.style[joystick.on ? "opacityActive" : "opacityInactive"]
     if (opacity > 0) {
       engine.push()
+
       engine.alpha(opacity)
 
       const render = _config.render ? _config.render : joystick.draw
@@ -258,6 +259,7 @@ export default function plugin(engine, config = {}) {
         joystick.style,
         engine
       )
+
       engine.pop()
     }
   }
